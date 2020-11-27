@@ -1,0 +1,8 @@
+#if !defined(__PROJ_CONFIG__)
+#define __PROJ_CONFIG__
+#pragma once
+
+#define APP_RELEASE_VERSION ${APP_RELEASE_VERSION}
+#define APP_INTERNAL_VERSION ${APP_INTERNAL_VERSION}
+
+#endif // #if !defined(__PROJ_CONFIG__)

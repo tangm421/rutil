@@ -1,8 +1,57 @@
-project(test)
-cmake_minimum_required(VERSION 2.8)
 
-set(HEADERS "./src/header.h")
+cmake_minimum_required (VERSION 2.6)
+project (inout)
 
-set(SOURCES "./src/main.cpp")
+#not build ZERO_CHECK
+#set(CMAKE_SUPPRESS_REGENERATION ON)
 
-add_executable(${PROJECT_NAME} ${HEADERS} ${SOURCES})
+# The version number.
+set (APP_VERSION_MAJOR 0)
+set (APP_VERSION_MINOR 1)
+set (APP_VERSION_PATCH 0)
+set (APP_VERSION_DATE 20200208)
+set (APP_RELEASE_VERSION \"${APP_VERSION_MAJOR}.${APP_VERSION_MINOR}.${APP_VERSION_PATCH}\")
+set (APP_INTERNAL_VERSION \"${APP_VERSION_MAJOR}.${APP_VERSION_MINOR}.${APP_VERSION_PATCH}.${APP_VERSION_DATE}\")
+message(STATUS "INTERNAL VERSION: ${APP_INTERNAL_VERSION}")
+
+set(USE_OPENSSL OFF CACHE BOOL "Flag indicating if compile with openssl or not")
+IF(WIN32)
+  set(LIBOPENSSL_INSTALL_DIR "" CACHE PATH "The path where openssl libraries installed")
+ENDIF()
+
+if(USE_OPENSSL)
+    set(LIBOPENSSL_INCLUDE_DIR "${LIBOPENSSL_INSTALL_DIR}/include")
+    set(LIBOPENSSL_LIB_DIR "${LIBOPENSSL_INSTALL_DIR}/lib")
+    if(WIN32)
+      set(LIBOPENSSL_LIBS "openssl.lib libssl.lib libcrypto.lib")
+    else()
+	  set(LIBOPENSSL_LIBS "libssl.a libcrypto.a")
+    endif()
+endif()
+
+# configure a header file to pass some of the CMake settings
+# to the source code
+configure_file (
+  "${PROJECT_SOURCE_DIR}/config.h.in"
+  "${PROJECT_BINARY_DIR}/config.h"
+)
+
+set(EXE_OUTPUT_DIR "${PROJECT_SOURCE_DIR}/bin")
+set(LIB_OUTPUT_DIR "${PROJECT_SOURCE_DIR}/lib")
+if(CMAKE_CL_64)
+  set(EXE_OUTPUT_DIR "${EXE_OUTPUT_DIR}/x64")
+  set(LIB_OUTPUT_DIR "${LIB_OUTPUT_DIR}/x64")
+endif()
+
+set(EXECUTABLE_OUTPUT_PATH	${EXE_OUTPUT_DIR})
+set(LIBRARY_OUTPUT_PATH		${LIB_OUTPUT_DIR})
+
+#CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG
+#CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG
+#CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG
+#CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE
+#CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE
+#CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE
+
+add_subdirectory(contrib/rutil)
+add_subdirectory(src)
